@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the readSystemParameters method from the ComManager class, for the Dart programming language.">
+  <title>readSystemParameters method - ComManager class - com_manager library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">light_painting</a></li>
+    <li><a href="../../control_com_manager/control_com_manager-library.html">com_manager</a></li>
+    <li><a href="../../control_com_manager/ComManager-class.html">ComManager</a></li>
+    <li class="self-crumb">readSystemParameters method</li>
+  </ol>
+  <div class="self-name">readSystemParameters</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">readSystemParameters</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">readSystemParameters</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Reads the system parameters of the LightStick.</p>
+<p>This method sends a GET request to the URL "http://ipAddress/systemRead".
+The system parameters in the HTTP response are stored in map form to <a href="../../control_com_manager/ComManager/lightStick.html">lightStick</a>'s 'systemParameters' property.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; readSystemParameters() async{
+  try{
+    var url = Uri.parse(&quot;http:&#47;&#47;${lightStick.ipAddress}&#47;systemRead&quot;);
+    var client = http.Client();
+    var response = await client.get(url);
+    if(response.statusCode == 200){
+      lightStick.systemParameters = jsonDecode(response.body.toString());
+    }
+    else{
+      lightStick.wifiColor = &quot;red&quot;;
+      lightStick.deviceStatus = &quot;READ ERROR : ${response.body}&quot;;
+    }
+  }
+  catch(e){
+    lightStick.wifiColor = &quot;red&quot;;
+    lightStick.deviceStatus = &quot;READ ERROR : CONNECTION LOST ($e)&quot;;
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">light_painting</a></li>
+  <li><a href="../../control_com_manager/control_com_manager-library.html">com_manager</a></li>
+  <li><a href="../../control_com_manager/ComManager-class.html">ComManager</a></li>
+  <li class="self-crumb">readSystemParameters method</li>
+</ol>
+
+
+    <h5>ComManager class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../control_com_manager/ComManager-class.html#constructors">Constructors</a></li>
+          <li><a href="../../control_com_manager/ComManager/ComManager.html">ComManager</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../control_com_manager/ComManager-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title inherited"><a href="../../control_com_manager/ComManager-class.html#instance-methods">Methods</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../control_com_manager/ComManager-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+        <li class="section-title"><a href="../../control_com_manager/ComManager-class.html#static-properties">Static properties</a></li>
+          <li><a href="../../control_com_manager/ComManager/lightStick.html">lightStick</a></li>
+
+        <li class="section-title"><a href="../../control_com_manager/ComManager-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../control_com_manager/ComManager/deleteImage.html">deleteImage</a></li>
+          <li><a href="../../control_com_manager/ComManager/locateLightStick.html">locateLightStick</a></li>
+          <li><a href="../../control_com_manager/ComManager/readDevice.html">readDevice</a></li>
+          <li><a href="../../control_com_manager/ComManager/readDeviceParameters.html">readDeviceParameters</a></li>
+          <li><a href="../../control_com_manager/ComManager/readImageList.html">readImageList</a></li>
+          <li><a href="../../control_com_manager/ComManager/readSystemParameters.html">readSystemParameters</a></li>
+          <li><a href="../../control_com_manager/ComManager/readWifiStatus.html">readWifiStatus</a></li>
+          <li><a href="../../control_com_manager/ComManager/requestAction.html">requestAction</a></li>
+          <li><a href="../../control_com_manager/ComManager/restoreSettings.html">restoreSettings</a></li>
+          <li><a href="../../control_com_manager/ComManager/saveDeviceParameters.html">saveDeviceParameters</a></li>
+          <li><a href="../../control_com_manager/ComManager/uploadImage.html">uploadImage</a></li>
+          <li><a href="../../control_com_manager/ComManager/writeDeviceParameters.html">writeDeviceParameters</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    light_painting
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

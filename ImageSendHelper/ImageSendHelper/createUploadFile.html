@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the createUploadFile method from the ImageSendHelper class, for the Dart programming language.">
+  <title>createUploadFile method - ImageSendHelper class - ImageSendHelper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">light_painting</a></li>
+    <li><a href="../../ImageSendHelper/ImageSendHelper-library.html">ImageSendHelper</a></li>
+    <li><a href="../../ImageSendHelper/ImageSendHelper-class.html">ImageSendHelper</a></li>
+    <li class="self-crumb">createUploadFile method</li>
+  </ol>
+  <div class="self-name">createUploadFile</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">createUploadFile</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://pub.dev/documentation/http/0.13.5/http/MultipartFile-class.html">MultipartFile</a></span>
+<span class="name ">createUploadFile</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="createUploadFile-param-uploadBitmap"><span class="type-annotation"><a href="https://pub.dev/documentation/bitmap/0.1.2/bitmap/Bitmap-class.html">Bitmap</a></span> <span class="parameter-name">uploadBitmap</span>, </span></li>
+<li><span class="parameter" id="createUploadFile-param-uploadFilename"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">uploadFilename</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Create a HTTP multipart file of the Bitmap image with a specified filename.</p>
+<p>The function converts a Bitmap Class object to a BMP format and
+returns the <code>http.MultipartFile</code> object which can be used with the <code>http.MultipartRequest</code> class
+to send the image to a server.</p>
+<p>The <code>uploadFilename</code> parameter specifies the filename of the image file to be uploaded.
+The returned <a href="https://pub.dev/documentation/http/0.13.5/http/MultipartFile-class.html">http.MultipartFile</a> object has the same filename and the 'image/bmp' content type.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static http.MultipartFile createUploadFile(Bitmap uploadBitmap, String uploadFilename){
+  var u32 = uploadBitmap.content.buffer.asUint32List();
+
+  var h = uploadBitmap.height.toInt();
+  var w = uploadBitmap.width.toInt();
+  int w3 = w * 3;
+  int headerSize = 14;
+  int dibHeaderSize = 40;
+  int stride = ((24 * w + 31) &#47; 32 ).floor() * 4;	         	&#47;&#47; row length incl. padding
+  int pixelArraySize = stride * h; &#47;&#47; total bitmap size
+  int fileLength = headerSize + dibHeaderSize + pixelArraySize;	&#47;&#47; header size is known + bitmap
+  ByteData file = ByteData(fileLength);					&#47;&#47; raw byte buffer (returned)
+  int pos = 0;
+  int s = 0;
+
+  &#47;&#47;print(u32);
+  void setU16(data) {file.setUint16(pos, data, Endian.little); pos += 2;}
+  void setU32(data) {file.setUint32(pos, data, Endian.little); pos += 4;}
+
+  &#47;&#47; write file header
+  setU16(0x4d42);						&#47;&#47; BM
+  setU32(fileLength);					&#47;&#47; total length
+  pos += 4;							&#47;&#47; skip unused fields
+  setU32(headerSize + dibHeaderSize);	&#47;&#47; offset to pixels
+  setU32(dibHeaderSize);				&#47;&#47; header size
+  setU32(w);
+  setU32(h &gt;&gt;&gt; 0);					&#47;&#47; negative = bottom-to-top
+  setU16(1);							&#47;&#47; 1 plane
+  setU16(24);							&#47;&#47; 24-bits (RGB)
+  setU32(0);							&#47;&#47; no compression (BI_BITFIELDS, 3)
+  setU32(pixelArraySize);				&#47;&#47; bitmap size incl. padding (stride x height)
+  setU32(0x2e23);						&#47;&#47; pixels&#47;meter h (~72 DPI x 39.3701 inch&#47;m)
+  setU32(0x2e23);						&#47;&#47; pixels&#47;meter v
+  pos += 8;							&#47;&#47; skip color&#47;important colors
+
+  &#47;&#47; bitmap data, change order of ABGR to BGR
+  for (var y = 0; y &lt; h; y++) {
+    var p = headerSize + dibHeaderSize + ((h - y - 1) * stride); &#47;&#47; offset + stride x height
+    for (var x = 0; x &lt; w3; x += 3) {
+      var v = u32[s++]; &#47;&#47; get ABGR
+      var r = v % 256;
+      var g = (v &gt;&gt;&gt; 8) % 256;
+      var b = (v &gt;&gt;&gt; 16) % 256;
+
+      file.setUint8(p + x, b);		&#47;&#47; red channel
+      file.setUint8(p + x + 1, g);	&#47;&#47; green channel
+      file.setUint8(p + x + 2, r);	&#47;&#47; blue channel
+    }
+  }
+
+  http.MultipartFile imageSent = http.MultipartFile.fromBytes(
+    &quot;image&quot;,
+    file.buffer.asUint8List(),
+    filename: uploadFilename,
+    contentType: MediaType(&#39;image&#39;, &#39;bmp&#39;),
+  );
+
+  return imageSent;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">light_painting</a></li>
+  <li><a href="../../ImageSendHelper/ImageSendHelper-library.html">ImageSendHelper</a></li>
+  <li><a href="../../ImageSendHelper/ImageSendHelper-class.html">ImageSendHelper</a></li>
+  <li class="self-crumb">createUploadFile method</li>
+</ol>
+
+
+    <h5>ImageSendHelper class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../ImageSendHelper/ImageSendHelper-class.html#constructors">Constructors</a></li>
+          <li><a href="../../ImageSendHelper/ImageSendHelper/ImageSendHelper.html">ImageSendHelper</a></li>
+
+
+    <li class="section-title inherited">
+      <a href="../../ImageSendHelper/ImageSendHelper-class.html#instance-properties">Properties</a>
+    </li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+    <li class="section-title inherited"><a href="../../ImageSendHelper/ImageSendHelper-class.html#instance-methods">Methods</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+    <li class="section-title inherited"><a href="../../ImageSendHelper/ImageSendHelper-class.html#operators">Operators</a></li>
+    <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+        <li class="section-title"><a href="../../ImageSendHelper/ImageSendHelper-class.html#static-methods">Static methods</a></li>
+          <li><a href="../../ImageSendHelper/ImageSendHelper/createUploadFile.html">createUploadFile</a></li>
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    light_painting
+      1.0.0+1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+
